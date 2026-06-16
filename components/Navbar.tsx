@@ -25,7 +25,7 @@ export default function Navbar() {
     >
       <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
         <a href="#" className="flex items-center gap-2">
-          <Image src="/logo.png" alt="Mormality" width={44} height={44} className="invert" />
+          <Image src="/logo.png" alt="Mormality" width={44} height={44} />
           <span style={{ fontFamily: "'Space Grotesk', sans-serif" }} className="font-700 text-xl text-white tracking-tight">
             Mormality
           </span>

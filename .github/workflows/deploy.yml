@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - main
+  workflow_dispatch:
 
 jobs:
   deploy:
@@ -17,10 +18,19 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: 20
-          cache: npm
+          cache: npm            # caches ~/.npm keyed on package-lock.json hash
 
       - name: Install dependencies
         run: npm install
+
+      - name: Restore Next.js build cache
+        uses: actions/cache@v4
+        with:
+          path: .next/cache
+          # re-use cache when lock file and source files are unchanged
+          key: nextjs-${{ runner.os }}-${{ hashFiles('package-lock.json') }}-${{ hashFiles('**.[jt]s', '**.[jt]sx') }}
+          restore-keys: |
+            nextjs-${{ runner.os }}-${{ hashFiles('package-lock.json') }}-
 
       - name: Build static export
         run: npm run build
@@ -35,3 +45,6 @@ jobs:
           server-dir: /domains/mormality.com/public_html/
           timeout: 600000
           dangerous-clean-slate: false
+          exclude: |
+            **/__next.*.txt
+            **/index.txt
