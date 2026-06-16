@@ -33,4 +33,5 @@ jobs:
           password: ${{ secrets.FTP_PASSWORD }}
           local-dir: ./out/
           server-dir: /domains/mormality.com/public_html/
+          timeout: 600000
           dangerous-clean-slate: false
