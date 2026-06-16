@@ -215,8 +215,8 @@ export const contact = {
   subheading:
     "Tell us about your project and we'll get back to you within 24 hours with a plan.",
   email: "hello@mormality.com",
-  whatsappNumber: "60123456789", // digits only, no spaces or + sign
-  whatsappLabel: "WhatsApp Us",
+  instagram: "https://www.instagram.com/mormality?igsh=MXRscXJ1bG82Ym41aQ==", // full URL to your Instagram profile
+  linkedin: "https://www.linkedin.com/company/mormality/", // full URL to your LinkedIn page
   serviceOptions: [
     { value: "website", label: "Website Development" },
     { value: "ads", label: "Google Ads Management" },

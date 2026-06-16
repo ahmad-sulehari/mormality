@@ -2,16 +2,62 @@
 
 import { useState } from "react";
 import { motion } from "framer-motion";
-import { Send, Mail, MessageCircle } from "lucide-react";
+import { Send, Mail } from "lucide-react";
 import { contact as contactContent } from "../content";
+
+function InstagramIcon({ size = 18 }: { size?: number }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <rect x="2" y="2" width="20" height="20" rx="5" ry="5" />
+      <circle cx="12" cy="12" r="4" />
+      <circle cx="17.5" cy="6.5" r="0.5" fill="currentColor" stroke="none" />
+    </svg>
+  );
+}
+
+function LinkedInIcon({ size = 18 }: { size?: number }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="currentColor">
+      <path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z" />
+      <rect x="2" y="9" width="4" height="12" />
+      <circle cx="4" cy="4" r="2" />
+    </svg>
+  );
+}
+
+type FormState = "idle" | "submitting" | "success" | "error";
 
 export default function Contact() {
   const [form, setForm] = useState({ name: "", email: "", service: "", message: "" });
-  const [sent, setSent] = useState(false);
+  const [status, setStatus] = useState<FormState>("idle");
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setSent(true);
+    setStatus("submitting");
+
+    try {
+      const res = await fetch("https://api.web3forms.com/submit", {
+        method: "POST",
+        headers: { "Content-Type": "application/json", Accept: "application/json" },
+        body: JSON.stringify({
+          access_key: process.env.NEXT_PUBLIC_WEB3FORMS_KEY,
+          name: form.name,
+          email: form.email,
+          service: form.service,
+          message: form.message,
+        }),
+      });
+
+      const data = await res.json();
+      if (data.success) {
+        setStatus("success");
+        setForm({ name: "", email: "", service: "", message: "" });
+      } else {
+        setStatus("error");
+      }
+    } catch {
+      setStatus("error");
+    }
   };
 
   return (
@@ -45,13 +91,22 @@ export default function Contact() {
                 {contactContent.email}
               </a>
               <a
-                href={`https://wa.me/${contactContent.whatsappNumber}`}
+                href={contactContent.instagram}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="flex items-center gap-3 text-white/60 hover:text-white transition-colors duration-200 cursor-pointer"
               >
-                <MessageCircle size={18} className="text-[#FF2D78]" />
-                {contactContent.whatsappLabel}
+                <span className="text-[#FF2D78]"><InstagramIcon size={18} /></span>
+                Instagram
+              </a>
+              <a
+                href={contactContent.linkedin}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center gap-3 text-white/60 hover:text-white transition-colors duration-200 cursor-pointer"
+              >
+                <span className="text-[#FF2D78]"><LinkedInIcon size={18} /></span>
+                LinkedIn
               </a>
             </div>
           </motion.div>
@@ -62,7 +117,7 @@ export default function Contact() {
             viewport={{ once: true }}
             transition={{ duration: 0.5, delay: 0.15 }}
           >
-            {sent ? (
+            {status === "success" ? (
               <div className="card-dark rounded-3xl p-10 flex flex-col items-center justify-center text-center gap-4 min-h-[400px]">
                 <div className="w-16 h-16 rounded-full gradient-bg flex items-center justify-center">
                   <Send size={24} className="text-white" />
@@ -137,11 +192,18 @@ export default function Contact() {
                   />
                 </div>
 
+                {status === "error" && (
+                  <p className="text-red-400 text-sm text-center">
+                    Something went wrong. Please try again or email us directly.
+                  </p>
+                )}
+
                 <button
                   type="submit"
-                  className="gradient-bg text-white font-semibold py-4 rounded-xl flex items-center justify-center gap-2 hover:opacity-90 transition-opacity duration-200 cursor-pointer mt-2"
+                  disabled={status === "submitting"}
+                  className="gradient-bg text-white font-semibold py-4 rounded-xl flex items-center justify-center gap-2 hover:opacity-90 transition-opacity duration-200 cursor-pointer mt-2 disabled:opacity-60 disabled:cursor-not-allowed"
                 >
-                  Send Message <Send size={16} />
+                  {status === "submitting" ? "Sending…" : <> Send Message <Send size={16} /> </>}
                 </button>
               </form>
             )}
