@@ -38,7 +38,7 @@ export const hero = {
   ctaPrimary: "Start a Project",
   ctaSecondary: "See Our Work",
   stats: [
-    { value: "50+", label: "Projects Delivered" },
+    { value: "100+", label: "Projects Delivered" },
     { value: "30+", label: "Happy Clients" },
     { value: "3×", label: "Avg. ROI on Ads" },
   ],
