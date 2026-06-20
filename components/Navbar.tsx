@@ -1,7 +1,6 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import Image from "next/image";
 import { Menu, X } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 
@@ -25,7 +24,17 @@ export default function Navbar() {
     >
       <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
         <a href="#" className="flex items-center gap-2">
-          <Image src="/logo.png" alt="Mormality" width={44} height={44} />
+          <picture>
+            <source srcSet="/logo.webp" type="image/webp" />
+            <img
+              src="/logo-opt.png"
+              alt="Mormality"
+              width={44}
+              height={44}
+              fetchPriority="high"
+              decoding="async"
+            />
+          </picture>
           <span style={{ fontFamily: "'Space Grotesk', sans-serif" }} className="font-700 text-xl text-white tracking-tight">
             Mormality
           </span>
